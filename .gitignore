@@ -1,0 +1,7 @@
+
+/app/__pycache__
+/app/custom_view/__pycache__
+/app/presenter/__pycache__
+/app/resources/__pycache__
+/app/view/__pycache__
+/app/model/__pycache__
