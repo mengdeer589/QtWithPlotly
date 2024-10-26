@@ -206,4 +206,17 @@
     <file>symbol_icon/y-right.svg</file>
     <file>symbol_icon/y-up.svg</file>
   </qresource>
+  <qresource prefix="chart_theme">
+    <file>chart_theme/ggplot2.svg</file>
+    <file>chart_theme/seaborn.svg</file>
+    <file>chart_theme/simple_white.svg</file>
+    <file>chart_theme/plotly.svg</file>
+    <file>chart_theme/plotly_white.svg</file>
+    <file>chart_theme/plotly_dark.svg</file>
+    <file>chart_theme/presentation.svg</file>
+    <file>chart_theme/xgridoff.svg</file>
+    <file>chart_theme/ygridoff.svg</file>
+    <file>chart_theme/gridon.svg</file>
+    <file>chart_theme/none.svg</file>
+  </qresource>
 </RCC>

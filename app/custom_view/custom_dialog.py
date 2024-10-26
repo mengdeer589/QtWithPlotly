@@ -1,91 +1,166 @@
-import sys
-
-from PyQt5.QtCore import QLocale, QSize, Qt, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QColor, QIcon, QInputMethodEvent
-from PyQt5.QtSvg import QSvgWidget
-from PyQt5.QtWidgets import (QAction, QApplication, QGridLayout, QHBoxLayout,
-                             QLineEdit, QListWidgetItem, QVBoxLayout, QWidget)
-from qfluentwidgets import (Action, CaptionLabel, CardWidget, CheckBox,
-                            ColorDialog, ComboBox, DropDownPushButton,
-                            DropDownToolButton, FluentIcon, FluentWindow,
-                            Flyout, FlyoutViewBase, HorizontalSeparator,
-                            HyperlinkButton, LineEdit, MenuAnimationType,
-                            MessageBoxBase, MSFluentWindow, RoundMenu,
-                            SearchLineEdit, SubtitleLabel,
-                            TransparentPushButton, TransparentToolButton,
-                            isDarkTheme, qconfig)
-from qfluentwidgets.components.widgets.button import (DropDownButtonBase,
-                                                      ToolButton)
-from qfluentwidgets.components.widgets.combo_box import ComboItem
-from qfluentwidgets.components.widgets.menu import (MenuActionListWidget,
-                                                    MenuAnimationManager)
+from PyQt5.QtCore import QSize, pyqtSignal
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QGridLayout, QHBoxLayout, QVBoxLayout, QWidget
+from qfluentwidgets import (
+    CaptionLabel,
+    ColorDialog,
+    ComboBox,
+    HorizontalSeparator,
+    LineEdit,
+    Dialog,
+    SubtitleLabel,
+    TransparentToolButton,
+    TransparentPushButton,
+)
+from qfluentwidgets.components.widgets.button import ToolButton
 
 
-class TraceDialog(MessageBoxBase):
+class TraceDialog(Dialog):
     def __init__(self, parent, info: dict):
-        super().__init__(parent=parent)
-        self.title_label = SubtitleLabel("Trace 自定义", self)
-        self.viewLayout.addWidget(self.title_label)
-        self.param_lay = QGridLayout(self)
-        self.viewLayout.addLayout(self.param_lay)
+        super().__init__(content="", title="Trace 自定义", parent=parent)
+        self.vBoxLayout.removeItem(self.textLayout)
+        for i in reversed(range(self.textLayout.count())):
+            widget_item = self.textLayout.itemAt(i)
+            widget = widget_item.widget()
+            if widget is not None:
+                widget.deleteLater()
+            self.textLayout.removeItem(widget_item)
+        self.textLayout.setParent(None)
+        self.textLayout.deleteLater()
+        self.finished.connect(self.deleteLater)
+        self.param_widget = QWidget(self)
+        self.param_lay = QGridLayout(self.param_widget)
+        self.vBoxLayout.insertWidget(1, self.param_widget)
 
         self.name_label = CaptionLabel("数据轨迹名称", self)
-        self.param_lay.addWidget(self.name_label, 0, 0, )
+        self.param_lay.addWidget(
+            self.name_label,
+            0,
+            0,
+        )
         self.name_input = LineEdit(self)
-        self.param_lay.addWidget(self.name_input, 0, 1, )
+        self.param_lay.addWidget(
+            self.name_input,
+            0,
+            1,
+        )
         self.trace_mode_label = CaptionLabel("模式", self)
-        self.param_lay.addWidget(self.trace_mode_label, 0, 2, )
+        self.param_lay.addWidget(
+            self.trace_mode_label,
+            0,
+            2,
+        )
         self.trace_mode_cbb = ComboBox(self)
-        self.param_lay.addWidget(self.trace_mode_cbb, 0, 3, )
+        self.param_lay.addWidget(
+            self.trace_mode_cbb,
+            0,
+            3,
+        )
         self.line_width_label = CaptionLabel("线宽", self)
-        self.param_lay.addWidget(self.line_width_label, 1, 0, )
+        self.param_lay.addWidget(
+            self.line_width_label,
+            1,
+            0,
+        )
         self.line_width_input = LineEdit(self)
-        self.param_lay.addWidget(self.line_width_input, 1, 1, )
+        self.param_lay.addWidget(
+            self.line_width_input,
+            1,
+            1,
+        )
         self.line_color_label = CaptionLabel("线条颜色", self)
-        self.param_lay.addWidget(self.line_color_label, 1, 2, )
+        self.param_lay.addWidget(
+            self.line_color_label,
+            1,
+            2,
+        )
         self.line_color_btn = TransparentPushButton(self)
-        self.param_lay.addWidget(self.line_color_btn, 1, 3, )
+        self.param_lay.addWidget(
+            self.line_color_btn,
+            1,
+            3,
+        )
         self.line_dash_label = CaptionLabel("线型", self)
-        self.param_lay.addWidget(self.line_dash_label, 2, 0, )
+        self.param_lay.addWidget(
+            self.line_dash_label,
+            2,
+            0,
+        )
         self.line_dash_cbb = ComboBox(self)
-        self.param_lay.addWidget(self.line_dash_cbb, 2, 1, )
+        self.param_lay.addWidget(
+            self.line_dash_cbb,
+            2,
+            1,
+        )
         self.marker_size_label = CaptionLabel("标记大小", self)
-        self.param_lay.addWidget(self.marker_size_label, 2, 2, )
+        self.param_lay.addWidget(
+            self.marker_size_label,
+            2,
+            2,
+        )
         self.marker_size_input = LineEdit(self)
-        self.param_lay.addWidget(self.marker_size_input, 2, 3, )
+        self.param_lay.addWidget(
+            self.marker_size_input,
+            2,
+            3,
+        )
         self.marker_color_label = CaptionLabel("标记颜色", self)
-        self.param_lay.addWidget(self.marker_color_label, 3, 0, )
+        self.param_lay.addWidget(
+            self.marker_color_label,
+            3,
+            0,
+        )
         self.marker_color_btn = TransparentPushButton(self)
-        self.param_lay.addWidget(self.marker_color_btn, 3, 1, )
+        self.param_lay.addWidget(
+            self.marker_color_btn,
+            3,
+            1,
+        )
         self.marker_symbol_label = CaptionLabel("标记符号", self)
-        self.param_lay.addWidget(self.marker_symbol_label, 3, 2, )
+        self.param_lay.addWidget(
+            self.marker_symbol_label,
+            3,
+            2,
+        )
         self.marker_symbol_cbb = ComboBox(self)
-        self.param_lay.addWidget(self.marker_symbol_cbb, 3, 3, )
+        self.param_lay.addWidget(
+            self.marker_symbol_cbb,
+            3,
+            3,
+        )
 
+        self.setFixedWidth(600)
         self._config_ui(info)
         self._config_event(info)
         self.accepted.connect(self.get_param)
-        self.param: dict = {"curveNumber": info.get("curveNumber", 0), }
+        self.param: dict = {
+            "curveNumber": info.get("curveNumber", 0),
+        }
 
     def _config_ui(self, info: dict):
         self.name_input.setText(info.get("trace_name", ""))
-        modes=["lines","markers","lines+markers"]
+        modes = ["lines", "markers", "lines+markers"]
         self.trace_mode_cbb.addItems(modes)
         self.trace_mode_cbb.setCurrentText(info.get("trace_mode", "lines+markers"))
         self.line_width_input.setText(str(info.get("line_width", 5)))
         color = info.get("line_color", "red")
         self.line_color_btn.setText(color)
-        new_stylesheet = self.line_color_btn.styleSheet() + f"TransparentPushButton{{background-color:{color};}}"
+        new_stylesheet = (
+                self.line_color_btn.styleSheet()
+                + f"TransparentPushButton{{background-color:{color};}}"
+        )
         self.line_color_btn.setStyleSheet(new_stylesheet)
         self.marker_size_input.setText(str(info.get("marker_size", 5)))
 
         color = info.get("marker_color", "red")
         self.marker_color_btn.setText(color)
-        new_stylesheet = self.marker_color_btn.styleSheet() + f"TransparentPushButton{{background-color:{color};}}"
+        new_stylesheet = (
+                self.marker_color_btn.styleSheet()
+                + f"TransparentPushButton{{background-color:{color};}}"
+        )
         self.marker_color_btn.setStyleSheet(new_stylesheet)
 
-
-        items = ['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']
+        items = ["solid", "dot", "dash", "longdash", "dashdot", "longdashdot"]
         self.line_dash_cbb.addItems(items)
         self.line_dash_cbb.setCurrentText(info.get("line_dash", "solid"))
         symbol_items = [
@@ -152,40 +227,61 @@ class TraceDialog(MessageBoxBase):
 
     def _config_event(self, info: dict):
         self.line_color_btn.clicked.connect(
-            lambda: self.show_color_dialog(self.line_color_btn, info.get("line_color", "red")))
+            lambda: self.show_color_dialog(
+                self.line_color_btn, info.get("line_color", "red")
+            )
+        )
         self.marker_color_btn.clicked.connect(
-            lambda: self.show_color_dialog(self.marker_color_btn, info.get("marker_color", "red")))
+            lambda: self.show_color_dialog(
+                self.marker_color_btn, info.get("marker_color", "red")
+            )
+        )
 
     def show_color_dialog(self, obj: TransparentPushButton, default_color: str):
-        w = TraceColorDialog(default_color=default_color, parent=self)
+        w = TraceColorDialog(default_color=default_color, parent=None)
         result = w.exec_()
         if result:
             color = w.selected_color
-            new_stylesheet = obj.styleSheet() + f"TransparentPushButton{{background-color:{color};}}"
+            new_stylesheet = (
+                    obj.styleSheet() + f"TransparentPushButton{{background-color:{color};}}"
+            )
             obj.setStyleSheet(new_stylesheet)
             obj.setText(color)
 
     def get_param(self):
-        self.param |= {"trace_name": self.name_input.text(),
-                       "trace_mode":self.trace_mode_cbb.currentText(),
-                       "line_width": int(self.line_width_input.text()),
-                       "line_color": self.line_color_btn.text(),
-                       "line_dash": self.line_dash_cbb.currentText(),
-                       "marker_size": int(self.marker_size_input.text()),
-                       "marker_color": self.marker_color_btn.text(),
-                       "marker_symbol": self.marker_symbol_cbb.currentText(),
-                       }
+        self.param |= {
+            "trace_name": self.name_input.text(),
+            "trace_mode": self.trace_mode_cbb.currentText(),
+            "line_width": int(self.line_width_input.text()),
+            "line_color": self.line_color_btn.text(),
+            "line_dash": self.line_dash_cbb.currentText(),
+            "marker_size": int(self.marker_size_input.text()),
+            "marker_color": self.marker_color_btn.text(),
+            "marker_symbol": self.marker_symbol_cbb.currentText(),
+        }
 
 
-class TraceColorDialog(MessageBoxBase):
+class TraceColorDialog(Dialog):
     closed = pyqtSignal()
 
-    def __init__(self, default_color: str, parent=None, ):
-        super().__init__(parent)
-        self.titleLabel = SubtitleLabel('色彩对话框', self)
-        self.viewLayout.addWidget(self.titleLabel)
+    def __init__(
+            self,
+            default_color: str,
+            parent=None,
+    ):
+        super().__init__(content="", title="色彩对话框", parent=parent)
+        self.vBoxLayout.removeItem(self.textLayout)
+        for i in reversed(range(self.textLayout.count())):
+            widget_item = self.textLayout.itemAt(i)
+            widget = widget_item.widget()
+            if widget is not None:
+                widget.deleteLater()
+            self.textLayout.removeItem(widget_item)
+        self.textLayout.setParent(None)
+        self.textLayout.deleteLater()
+        self.finished.connect(self.deleteLater)
         self.widget = QWidget(self)
-        self.viewLayout.addWidget(self.widget)
+        self.vBoxLayout.insertWidget(1, self.widget)
         self.widget1 = QWidget(self)
         self.widget_lay = QVBoxLayout(self.widget)
         self.widget_lay.addWidget(self.widget1)
@@ -330,14 +426,14 @@ class TraceColorDialog(MessageBoxBase):
             # 其他（黑色）
             "black",
         ]
-        self.widget.setMinimumWidth(500)
         for idx, color in enumerate(colors):
-            button = TransparentToolButton(self.widget2)
-            button.setIconSize(QSize(35, 35))
-            button.setIcon(QIcon(f":/color_icon/color_icon/{color}.svg"))
+            button = TransparentToolButton(
+                QIcon(f":/color_icon/color_icon/{color}.svg"), self.widget2
+            )
             row = idx // 15
             column = idx % 15
-            button.setFixedSize(38, 38)
+            button.setIconSize(QSize(38, 38))
+            button.setFixedSize(QSize(40, 40))
             button.setProperty("color", color)
             button.clicked.connect(self.get_color)
             self.widget2_lay.addWidget(button, row, column)
@@ -346,12 +442,15 @@ class TraceColorDialog(MessageBoxBase):
         self.custom_color = TransparentPushButton(self)
         self.widget_lay.addWidget(self.custom_color)
         self.custom_color.setText("自定义颜色")
-        self.custom_color.clicked.connect(lambda: self._show_color_dialog(default_color))
+        self.custom_color.clicked.connect(
+            lambda: self._show_color_dialog(default_color)
+        )
         self.widget_lay.addWidget(HorizontalSeparator(self.widget))
         self.widget3 = QWidget(self.widget)
         self.widget_lay.addWidget(self.widget3)
         self.widget3_lay = QHBoxLayout(self.widget3)
         self.selected_color = default_color
+        self.setFixedWidth(600)
 
     def _show_color_dialog(self, default_color: str):
         w = ColorDialog(default_color, "颜色对话框", parent=self)

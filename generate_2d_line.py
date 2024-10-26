@@ -1,69 +1,83 @@
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+config = {
+        "scrollZoom": True,
+        "editable": False,
+        "staticPlot": False,
+        "displayModeBar": True,
+        "displaylogo": False,
+        "modeBarButtonsToRemove": [
+            "sendDataToCloud",
+            "editInChartStudio",
+            "lasso2d",
+            "drawrect",
+            "select2d",
+        ],
+        "toImageButtonOptions": {
+            "format": "svg",
+            "filename": "custom_image",
+            "scale": 1,
+        },
+        "showLink": False,
+        "showTips": True,
+        "locale": "zh",
+        "doubleClick": "reset+autosize",
+        "doubleClickDelay": 300,
+        "sendData": False,
+        "watermark": True,
+        "modeBarButtonsToAdd": ["toggleHover","hoverCompareCartesian", "toggleSpikelines", "tableRotation"],
+        "autosizable": True,
+    }
+# 创建一个3行2列的子图网格，并调整子图间的间距
+fig = make_subplots(rows=3, cols=2,
+                    # subplot_titles=("Scatter", "Line", "Line_Mark", "Area", "Bar"),
+                    horizontal_spacing=0.05,  # 减小水平间距
+                    vertical_spacing=0.05)   # 减小垂直间距
 
-# 生成数据
-x = list(range(20))  # X轴从0到19的整数列表
-y1 = [i * 0.5 + (i % 3) for i in x]  # 第一条曲线的数据
-y2 = [(i * 0.4 - (i % 2)) for i in x]  # 第二条曲线的数据
-y3 = [(i * 0.6 + (i % 5)) for i in x]  # 第三条曲线的数据
+# Scatter
+fig.add_trace(go.Scatter(x=[0, 1, 2, 3], y=[0, 3, 6, 9]), row=1, col=1)
 
-# 创建图形对象
-fig = go.Figure()
+# Line
+fig.add_trace(go.Scatter(x=[0, 1, 2, 3], y=[0, 5, 2, 8], mode='lines'), row=1, col=2)
 
-# 添加第一条曲线
-fig.add_trace(go.Scatter(showlegend=True,
-                         x=x, y=y1,
-                         mode='lines+markers',  # 同时显示线条和标记
-                         name='曲线1',
-                         marker=dict(
-                             size=10,  # 标记大小
-                             symbol='circle',  # 标记形状
-                             color='blue'  # 标记颜色
-                         ),
-                         line=dict(
-                             width=2,  # 线条宽度
-                             color='blue',  # 线条颜色
-                             dash='solid'  # 线条类型：实线
-                         )
-                         ))
+# Line_Mark
+fig.add_trace(go.Scatter(x=[0, 1, 2, 3], y=[5, 3, 7, 1], mode='lines+markers'), row=2, col=1)
 
-# 添加第二条曲线
-fig.add_trace(go.Scatter(showlegend=True,
-                         x=x, y=y2,
-                         mode='lines+markers',
-                         name='曲线2',
-                         marker=dict(
-                             size=12,
-                             symbol='square',
-                             color='red'
-                         ),
-                         line=dict(
-                             width=3,
-                             color='red',
-                             dash='dash'  # 线条类型：虚线
-                         )
-                         ))
+# Area
+fig.add_trace(go.Scatter(x=[0, 1, 2, 3], y=[1, 3, 5, 7], fill='tozeroy'), row=2, col=2)
 
-# 添加第三条曲线
-fig.add_trace(go.Scatter(showlegend=True,
-                         x=x, y=y3,
-                         mode='lines+markers',
-                         name='曲线3',
-                         marker=dict(
-                             size=8,
-                             symbol='diamond',
-                             color='green'
-                         ),
-                         line=dict(
-                             width=4,
-                             color='green',
-                             dash='dot'  # 线条类型：点划线
-                         )
-                         ))
+# Bar
+fig.add_trace(go.Bar(x=['a', 'b', 'c'], y=[2, 5, 7]), row=3, col=1)
 
 # 更新布局
-fig.update_layout(title='自定义样式后的三条曲线折线图',
-                  xaxis_title='X轴',
-                  yaxis_title='Y轴')
+fig.update_layout(height=900, width=900, showlegend=False)
 
-# 将图表写入HTML文件
-fig.write_html("测试2d_line.html", div_id="chart")
+# 更新每个子图的布局
+for i in range(1, 4):
+    fig.update_xaxes( row=i, col=1)
+    fig.update_yaxes( row=i, col=1)
+
+for i in range(1, 3):
+    fig.update_xaxes( row=1, col=i)
+    fig.update_yaxes( row=1, col=i)
+
+fig.update_xaxes( row=2, col=2)
+fig.update_yaxes( row=2, col=2)
+
+for temp in [
+            "ggplot2",
+            "seaborn",
+            "simple_white",
+            "plotly",
+            "plotly_white",
+            "plotly_dark",
+            "presentation",
+            "xgridoff",
+            "ygridoff",
+            "gridon",
+            "none",
+        ]:
+    config["toImageButtonOptions"]["filename"]=temp
+    fig.update_layout(template=temp)
+    # fig.show(config=config)
+    print(f"    <file>chart_theme/{temp}.svg</file>")

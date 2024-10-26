@@ -5,3 +5,6 @@
 /app/resources/__pycache__
 /app/view/__pycache__
 /app/model/__pycache__
+/.idea
+generate_2d_line.py
+app/resources/ui.ui

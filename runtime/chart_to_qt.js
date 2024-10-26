@@ -76,6 +76,7 @@ if (!myChart) { alert("图表对象定位失败！") } else {
 function chart_restyle(param) {
     const parameters = JSON.parse(param);
     const curveNumber = parameters.curveNumber;
+
     
     Plotly.restyle(myChart, {
         'name': parameters.trace_name,

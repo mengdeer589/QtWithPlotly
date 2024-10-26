@@ -1,5 +1,11 @@
 from pathlib import Path
+from queue import Queue
+
 from PyQt5.QtCore import QObject, pyqtSignal
+
+from app.dash_app.generate_fig import CustomPlot
+from app.dash_app.plot_resample import SimpleChartApp
+from app.thread.thread_fun import DashThread
 
 
 class WebInterfaceModel(QObject):
@@ -12,6 +18,10 @@ class WebInterfaceModel(QObject):
             "qwebchannel": Path.cwd().joinpath(r"runtime\qwebchannel.js"),
             "chart_to_qt": Path.cwd().joinpath(r"runtime\chart_to_qt.js"),
         }
+        self.figure_queue = Queue()
+        self.chart_app = SimpleChartApp(self.figure_queue)
+
+        self.dash_thread = DashThread(queue=self.figure_queue, chart_app=self.chart_app, host="localhost", port=8000)
 
     def get_legend_info(self, info):
         print(info)
@@ -31,6 +41,12 @@ class WebInterfaceModel(QObject):
         :param info:
         :return:
         """
-
-
         self.trace_info_sig.emit(info)
+
+    def run_dash(self):
+        self.dash_thread.start()
+
+    def change_fig(self):
+        fig = CustomPlot.generate_figure()
+        update_method = {"method": "replace", "kwargs": {"figure": fig}}
+        self.figure_queue.put(update_method)

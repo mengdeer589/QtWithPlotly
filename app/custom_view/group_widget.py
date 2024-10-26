@@ -1,7 +1,13 @@
 import sys
 
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QApplication
-from qfluentwidgets import CardWidget, ToggleButton, FluentIcon, ToolTipFilter, ToolTipPosition
+from qfluentwidgets import (
+    CardWidget,
+    ToggleButton,
+    FluentIcon,
+    ToolTipFilter,
+    ToolTipPosition,
+)
 
 
 class ButtonGroup(CardWidget):
@@ -59,7 +65,7 @@ class ButtonGroup(CardWidget):
         return ""
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     widget = ButtonGroup()
     for i in range(10):

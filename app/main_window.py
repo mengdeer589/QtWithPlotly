@@ -2,7 +2,7 @@ import sys
 from typing import Optional
 
 from PyQt5.QtWidgets import QApplication
-from qfluentwidgets import MSFluentWindow, FluentIcon
+from qfluentwidgets import MSFluentWindow, FluentIcon, NavigationItemPosition,isDarkTheme,setTheme,toggleTheme
 
 from app.model.web_interface_model import WebInterfaceModel
 from app.presenter.web_interface_presenter import WebInterfacePresenter
@@ -24,6 +24,16 @@ class MainWindow(MSFluentWindow):
 
     def _ini_window(self):
         self.setWindowTitle("QtWithPlotly Plotly图表显示与编辑")
+        self.navigationInterface.addItem(
+            routeKey='toggle_theme',
+            icon=FluentIcon.HIGHTLIGHT,
+            text="明亮",
+            onClick=self.toggle_theme,
+            selectable=False,
+            position=NavigationItemPosition.BOTTOM
+        )
+    def toggle_theme(self):
+        toggleTheme()
 
     def web_interface_mvp(self):
         self.web_interface_model = WebInterfaceModel()
