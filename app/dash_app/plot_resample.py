@@ -77,7 +77,7 @@ class SimpleChartApp:
                         'marker.color': kwargs.get("marker_color"),
                         'marker.symbol': kwargs.get("marker_symbol"),
                     }
-                    self.fig.plotly_restyle(new_style,[curveNumber])
+                    self.fig.plotly_restyle(new_style, [curveNumber])
                     return self.fig
                 getattr(self.fig, method)(*update_method.get("args", ()),
                                           **kwargs)
