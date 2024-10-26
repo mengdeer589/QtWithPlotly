@@ -51,5 +51,4 @@ QtWithPlotly 是一个结合了 PyQt5 和 Dash 的应用，用于实现数据的
 
 如有任何问题或建议，请通过以下方式联系我们：
 
-- 邮箱：[你的邮箱地址]
-- GitHub Issues：[项目Issues页面链接]
+- 邮箱：2622387978@qq.com
