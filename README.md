@@ -8,9 +8,9 @@ QtWithPlotly 是一个结合了 PyQt5 和 Dash 的应用，用于实现数据的
 
 ![添加trace](docs/images/add_trace.gif)
 
-![图表主题切换](cs/images/change_theme.gif)
+![图表主题切换](docs/images/change_theme.gif)
 
-![自定义trace外观](images/custom_trace.gif)
+![自定义trace外观](docs/images/custom_trace.gif)
 
 ## 安装
 
